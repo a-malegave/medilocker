@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+  <title>Profile</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='/assets/bootstrap/css/bootstrap.min.css') }} " />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='/assets/css/styles.min.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='/assets/css/profile.css') }}" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.18.0/font/bootstrap-icons.css" rel="stylesheet" />
+
+  <script src="{{ url_for('static', filename='/assets/js/script.min.js') }}" type="module"></script>
+
+
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='/assets/js/profile.js') }}" type="module"></script>
+
+
+
+  <style>
+    /* Style the modal */
+    #imageModal.modal {
+      display: none;
+      z-index: 1000;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      overflow: auto;
+      background: rgba(255, 255, 255, 0.19);
+      border-radius: 16px;
+      border: 3px solid rgba(220, 51, 0, 0.2);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(7.3px);
+      -webkit-backdrop-filter: blur(7.3px);
+      max-height: 100%;
+      max-width: 100%;
+    }
+
+    #imageModal .modal-content {
+      margin: auto;
+      padding: 5%;
+      display: block;
+    }
+
+    #imageModal .close {
+      top: 5%;
+      margin-right: 5%;
+      color: rgb(255, 255, 255);
+      font-size: 24px;
+      font-weight: bold;
+      transition: 0.3s;
+      background-color: rgb(60, 64, 63);
+      padding: 5px;
+    }
+
+    #imageModal .close:hover,
+    #imageModal .close:focus {
+      color: #232323;
+      background-color: #ffffff;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+
+    /* For Webkit browsers (Chrome, Safari, etc.) */
+    .modal::-webkit-scrollbar {
+      width: 12px;
+      /* Width of the scrollbar */
+    }
+
+    .modal::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      /* Color of the scrollbar track */
+    }
+
+    .modal::-webkit-scrollbar-thumb {
+      background: #888;
+      /* Color of the scrollbar thumb */
+      border-radius: 6px;
+      /* Radius of the scrollbar thumb */
+    }
+
+    .modal::-webkit-scrollbar-thumb:hover {
+      background: #555;
+      /* Color of the scrollbar thumb on hover */
+    }
+
+    ::-webkit-scrollbar {
+      width: 12px;
+      /* Width of the scrollbar */
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      /* Color of the scrollbar track */
+    }
+
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(78, 115, 223, 0.3);
+      /* Color of the scrollbar thumb */
+      border-radius: 6px;
+      /* Radius of the scrollbar thumb */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(78, 115, 223, 0.6);
+      /* Color of the scrollbar thumb on hover */
+    }
+
+
+
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      /* From https://css.glass */
+      background: rgba(255, 255, 255, 0.21);
+      border-radius: 16px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    /* HTML: <div class="loader"></div> */
+    .loader {
+      width: 50px;
+      aspect-ratio: 1;
+      display: grid;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10000;
+    }
+
+    .loader::before,
+    .loader::after {
+      content: "";
+      grid-area: 1/1;
+      --c: no-repeat radial-gradient(farthest-side, #25b09b 92%, #0000);
+      background:
+        var(--c) 50% 0,
+        var(--c) 50% 100%,
+        var(--c) 100% 50%,
+        var(--c) 0 50%;
+      background-size: 12px 12px;
+      animation: l12 1s infinite;
+    }
+
+    .loader::before {
+      margin: 4px;
+      filter: hue-rotate(45deg);
+      background-size: 8px 8px;
+      animation-timing-function: linear
+    }
+
+    @keyframes l12 {
+      100% {
+        transform: rotate(.5turn)
+      }
+    }
+  </style>
+
+</head>
+
+<body id="page-top">
+  <div class="loader-overlay">
+    <div class="loader"></div>
+  </div>
+  <div id="wrapper">
+
+    <!-- ------------------------------------------------------------------------------------- -->
+
+    <div class="container-fluid">
+      <h3 class="text-dark mb-4 mx-1">Profile</h3>
+      <div class="row mb-3">
+        <div class="col-lg-4">
+
+          <a href="{{ url_for('users') }}" style="text-decoration: none;">
+            <div class="card shadow mb-3">
+              <div class="card-header py-2 text-center" style="background: transparent;">
+                <h6 class="text-secondary fw-bold m-0">👈 Go back to SearchUsers</h6>
+              </div>
+            </div>
+          </a>
+
+
+          <div class="card shadow mb-4">
+            <div class="card-header py-2 text-center" style="background: transparent;">
+              <h6 class="text-secondary fw-bold m-0" id="addNoteBtn">📝 Add note / prescription</h6>
+            </div>
+          </div>
+
+
+          <!-- Modal for adding note -->
+          <div id="noteModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="noteModalLabel"
+            aria-hidden="true" style="z-index: 10000;">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="noteModalLabel">Add Note / Prescription</h5>
+                  <!-- <button class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">❌</span>
+                  </button> -->
+                </div>
+                <div class="modal-body">
+                  <textarea class="form-control mb-2" id="noteTextarea" rows="4" cols="50"
+                    placeholder="Enter your note"></textarea>
+                  <label for="doctorCode">Doctor's Code:</label>
+                  <input type="text" class="form-control mb-3" id="doctorCode" placeholder="Enter doctor's code">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn" data-dismiss="modal">Close</button>
+                  <button id="submitNoteBtn" type="button" class="btn btn-primary">Submit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="text-primary fw-bold m-0">Upload Files</h6>
+            </div>
+
+            <div class="file-drop-area">
+              <span class="choose-file-button">Choose files</span>
+              <span class="file-message">or drag and drop files here</span>
+              <!-- Add disabled attribute if no access -->
+              <input class="file-input" type="file" multiple ${hospitalAccess !=='yes' ? 'disabled' : '' } />
+            </div>
+          </div>
+
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="text-primary fw-bold m-0">Profile QR</h6>
+            </div>
+
+            <div class="qr-code-container text-center">
+              <!-- Dynamically generated QR code will be placed here -->
+              <canvas id="qr-code-canvas" class="img-fluid" style="height: 200px; width: 200px;"></canvas>
+            </div>
+          </div>
+
+          <!-- <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="text-primary fw-bold m-0">Notes</h6>
+            </div>
+
+          </div> -->
+
+
+          <div class="container mt-4">
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="text-primary fw-bold m-0">Notes</h6>
+              </div>
+              <div class="card-body">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#notesCollapse"
+                  aria-expanded="false" aria-controls="notesCollapse">
+                  Show Notes
+                </button>
+
+                <!-- Notes Collapse -->
+                <div class="collapse mt-3" id="notesCollapse">
+                  <div id="notesListContainer" style="max-height: 200px; overflow-y:auto;">
+                    <div id="notesList">
+                      <!-- Fetched notes will be displayed here -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+
+        </div>
+        <div class="col-lg-8">
+          <div class="row">
+            <div class="col">
+              <div class="card shadow">
+                <div class="card-header py-3">
+                  <p class="text-primary m-0 fw-bold">User Details</p>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <!-- User Details -->
+
+                      <div class="mb-3">
+                        <p><strong>Name</strong> <span id="user-name"></span></p>
+                      </div>
+                      <div class="mb-3">
+                        <!-- <p><strong>Username</strong> <span id="username"></span></p> -->
+                      </div>
+                      <div class="mb-3">
+                        <p><strong>Phone Number</strong> <span id="phone-number"></span></p>
+                      </div>
+                      <div class="mb-3">
+                        <p>
+                          <strong>Age</strong>
+                          <span id="age"></span>
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <!-- Contact Settings -->
+
+                      <div class="mb-3">
+                        <p><strong>Birthday</strong> <span id="birthday"></span></p>
+                      </div>
+                      <div class="mb-3">
+                        <p><strong>Address</strong> <span id="address"></span></p>
+                      </div>
+                      <div class="mb-3">
+                        <p><strong>Blood Group</strong> <span id="bloodG"></span></p>
+                      </div>
+                      <div class="mb-3">
+                        <!-- <p><strong>Country</strong> <span id="country"></span></p> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- Show Documents -->
+
+          <div class="card shadow mb-4" style="margin-top: 20px;">
+            <div class="card-header py-3">
+              <h6 class="text-primary fw-bold m-0">Files</h6>
+            </div>
+            <div class="card-body">
+              <!-- Container for the gallery of documents -->
+              <div id="document-container" class="row">
+              </div>
+
+              <div id="imageModal" class="modal">
+                <span class="close">Click on blur area to minimize 👉</span>
+                <img class="modal-content" id="modalImage">
+              </div>
+
+            </div>
+          </div>
+
+
+
+
+
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <footer class="bg-white sticky-footer">
+    <div class="container my-auto">
+      <div class="text-center my-auto copyright">
+        <span>Copyright © Brand 2024</span>
+      </div>
+    </div>
+  </footer> -->
+  </div>
+  <a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+  </div>
+
+
+
+
+
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"></script> -->
+
+  <script src="https://www.gstatic.com/firebasejs/7.14.1-0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.1-0/firebase-storage.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1-0/firebase.js"></script>
+  <!-- Add these scripts at the end of the body tag -->
+  <script src="https://www.gstatic.com/firebasejs/7.14.1-0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.1-0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.1-0/firebase-database.js"></script>
+
+
+  <script>
+    $(document).on("change", ".file-input", function () {
+      var filesCount = $(this)[0].files.length;
+
+      var textbox = $(this).prev();
+
+      if (filesCount === 1) {
+        var fileName = $(this).val().split("\\").pop();
+        textbox.text(fileName);
+      } else {
+        textbox.text(filesCount + " files selected");
+      }
+    });
+  </script>
+
+  <script>
+    // Get current date and time
+    var now = new Date();
+    var timestamp = now.toLocaleString();
+
+    // Set timestamp for each modal
+    document.getElementById("regularVisitTimestamp").innerText = timestamp;
+    document.getElementById("diagnosticTestsTimestamp").innerText = timestamp;
+    document.getElementById("chronicMedicalConditionTimestamp").innerText = timestamp;
+  </script>
+
+
+
+
+  <script>
+    // Assuming 'userId' contains the text fetched from cache
+    const userId = localStorage.getItem('qrCodeData');
+
+    if (userId) {
+      // Generate the QR code
+      const qrCodeContainer = document.querySelector('.qr-code-container');
+
+      // Clear the container first
+      qrCodeContainer.innerHTML = '';
+
+      // Create a new QR code instance and render the QR code
+      const qrCode = qrcode(5, 'M');
+      qrCode.addData(userId);
+      qrCode.make();
+
+      // Create a canvas element to render the QR code
+      const canvas = qrCode.createImgTag(4);
+
+      // Append the canvas to the container
+      qrCodeContainer.innerHTML = canvas;
+
+    } else {
+      // Handle case when userId is not available
+      console.error("User ID not found in local storage.");
+    }
+
+
+  </script>
+
+
+
+
+
+</body>
+
+</html>

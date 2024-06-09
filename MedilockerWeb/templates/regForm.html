@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/form.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles.min.css') }}" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+
+
+    <style>
+        body {
+            height: 100vh;
+            overflow-y: hidden;
+            color: #DCE1DE;
+            background-image: linear-gradient(to right bottom, #e565ae, #bd6cbe, #9171c2, #6274bb, #3772ab, #2c72af, #1e71b4, #0071b8, #1370d5, #4f69eb, #8958f7, #c330f6);
+        }
+
+        .logo {
+            color: #DCE1DE;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .tab {
+            display: none;
+            border-radius: 10px;
+            border: 1px solid #bbbbbb;
+            padding: 10px;
+            background-color: transparent;
+        }
+
+        .invalid {
+            border-color: #dbb5b1;
+        }
+
+        .step {
+            height: 15px;
+            width: 15px;
+            margin: 0 2px;
+            background-color: #bbbbbb;
+            border: none;
+            border-radius: 50%;
+            display: inline-block;
+            opacity: 0.5;
+        }
+
+        .step.active {
+            opacity: 1;
+            background-color: #9864f8;
+        }
+
+        .step.finish {
+            background-color: #39f740;
+        }
+
+        /* Prevent resizing of input fields */
+        input {
+            height: 38px;
+            /* Adjust the height to your preference */
+            box-sizing: border-box;
+            border-radius: 10px;
+            background: #DCE1DE;
+        }
+
+        #nextBtn,
+        #prevBtn {
+            margin-top: 10px;
+        }
+
+        /* Customize modal body */
+        .modal-body {
+            background-color: #f3f3f3;
+            color: black;
+            /* Light gray background color */
+        }
+
+        /* Customize modal footer */
+        .modal-footer {
+            background-color: #858796;
+            /* Green color */
+            border-top: none;
+            /* Remove top border */
+        }
+
+        /* Customize modal close button */
+        .close {
+            color: white;
+            /* White color for close button */
+        }
+
+        /* Center modal content vertically */
+        .modal-dialog {
+            display: flex;
+            align-items: center;
+            min-height: calc(100% - 1rem);
+            /* Adjust height as needed */
+        }
+
+        /* Center modal content horizontally */
+        .modal-content {
+            margin: auto;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container mt-3" style=" background-color: transparent;">
+        <form id="regForm" style=" background-color: transparent;">
+            <h1 class="text-center mb-4 logo">Medilocker</h1>
+
+            <div class="tab">
+                <h3 class="text-center" style="color: #DCE1DE;">Hospital Details</h3>
+                <div class="form-group">
+                    <input type="text" class="form-control mb-3 rounded" placeholder="Hospital name..."
+                        oninput="this.className = ''" id="hname">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control mb-3 rounded" placeholder="Address..."
+                        oninput="this.className = ''" id="address">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control mb-3 rounded" placeholder="E-mail..."
+                        oninput="this.className = ''" id="email">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control mb-3 rounded" placeholder="Phone..."
+                        oninput="this.className = ''" id="phone">
+                </div>
+            </div>
+
+            <div class="tab">
+                <h3 class="text-center">Type and License</h3>
+                <div class="form-group">
+                    <select class="form-control mb-3" id="hospitalType" id="type">
+                        <option value="" disabled selected>Type of hospital</option>
+                        <option value="general">General</option>
+                        <option value="specialty">Specialty</option>
+                        <option value="teaching">Teaching</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="tel" class="form-control mb-3" placeholder="License and Accreditation"
+                        oninput="this.className = ''" id="license">
+                </div>
+                <div class="form-group">
+                    <label for="fileInput">License Related Document</label>
+                    <div class="custom-file mb-3">
+                        <input type="file" class="custom-file-input" id="fileInput" name="uploadedFile">
+                        <label class="custom-file-label" for="fileInput">Choose file</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab">
+                <h3 class="text-center">Capacity and Services</h3>
+                <div class="form-group">
+                    <input type="text" class="form-control mb-3" placeholder="Number of beds..."
+                        oninput="this.className = ''" id="beds">
+                </div>
+                <p>Departments:</p>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="dept1" name="dept1" value="Cardiology" />
+                    <label class="form-check-label" for="dept1">Cardiology</label>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="dept2" name="dept2" value="Neurology" />
+                    <label class="form-check-label" for="dept2">Neurology</label>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="dept3" name="dept3" value="Orthopedics" />
+                    <label class="form-check-label" for="dept3">Orthopedics</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="nn">Month:</label>
+                    <input type="text" class="form-control mb-3" placeholder="services offered..."
+                        oninput="this.className = ''" id="services">
+                </div>
+            </div>
+
+
+            <div class="text-center">
+                <button type="button" class="btn btn-secondary" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
+                <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextPrev(1)">Next</button>
+            </div>
+
+            <div class="text-center mt-4">
+                <!-- Circles which indicate the steps of the form: -->
+                <span class="step"></span>
+                <span class="step"></span>
+                <span class="step"></span>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p class="text-center">Your request for review has been submitted successfully!</p>
+                    <p class="text-center">We will review it shortly and notify you of the outcome.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1-0/firebase.js"></script>
+
+    <script>
+        // Initialize Firebase
+        var firebaseConfig = {
+            apiKey: "AIzaSyCftjIElJpUydY6s-7iXull3QA7rIAG868",
+            authDomain: "medilocker-d8f29.firebaseapp.com",
+            databaseURL: "https://medilocker-d8f29-default-rtdb.firebaseio.com",
+            projectId: "medilocker-d8f29",
+            storageBucket: "medilocker-d8f29.appspot.com",
+            messagingSenderId: "952661337765",
+            appId: "1:952661337765:web:7d3c1bad571d17dcfdcf4c"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        var currentTab = 0; // Current tab is set to be the first tab (0)
+        showTab(currentTab); // Display the current tab
+
+        function showTab(n) {
+            var x = document.getElementsByClassName("tab");
+            x[n].style.display = "block";
+            if (n == 0) {
+                document.getElementById("prevBtn").style.display = "none";
+            } else {
+                document.getElementById("prevBtn").style.display = "inline";
+            }
+            if (n == (x.length - 1)) {
+                document.getElementById("nextBtn").innerHTML = "Submit";
+            } else {
+                document.getElementById("nextBtn").innerHTML = "Next";
+            }
+            fixStepIndicator(n);
+        }
+
+        function nextPrev(n) {
+            var x = document.getElementsByClassName("tab");
+            if (n == 1 && !validateForm()) return false;
+            x[currentTab].style.display = "none";
+            currentTab = currentTab + n;
+            if (currentTab >= x.length) {
+                submitForm(); // Call the function to handle form submission
+                document.getElementById("prevBtn").style.display = "none"; // Hide previous button
+                document.getElementById("nextBtn").style.display = "none"; // Hide next button
+                return false;
+            }
+            showTab(currentTab);
+        }
+
+        function validateForm() {
+            var x, y, i, valid = true;
+            x = document.getElementsByClassName("tab");
+            y = x[currentTab].getElementsByTagName("input");
+            for (i = 0; i < y.length; i++) {
+                if (y[i].value == "") {
+                    y[i].className += " invalid";
+                    valid = false;
+                }
+            }
+            if (valid) {
+                document.getElementsByClassName("step")[currentTab].className += " finish";
+            }
+            return valid;
+        }
+
+        function fixStepIndicator(n) {
+            var i, x = document.getElementsByClassName("step");
+            for (i = 0; i < x.length; i++) {
+                x[i].className = x[i].className.replace(" active", "");
+            }
+            x[n].className += " active";
+        }
+
+
+
+
+        function submitForm() {
+            var hospitalName = document.getElementById('hname').value;
+            var address = document.getElementById('address').value;
+            var email = document.getElementById('email').value;
+            var phone = document.getElementById('phone').value;
+            var hospitalType = document.getElementById('hospitalType').value;
+            var license = document.getElementById('license').value;
+            var uploadedFile = document.getElementById('fileInput').value;
+            var beds = document.getElementById('beds').value;
+            var services = document.getElementById('services').value;
+
+            // Get department selections
+            var departments = [];
+            var dept1 = document.getElementById('dept1');
+            var dept2 = document.getElementById('dept2');
+            var dept3 = document.getElementById('dept3');
+
+            if (dept1.checked) {
+                departments.push(dept1.value);
+            }
+            if (dept2.checked) {
+                departments.push(dept2.value);
+            }
+            if (dept3.checked) {
+                departments.push(dept3.value);
+            }
+
+            var hospitalDetails = {
+                // Assign input values to hospital details
+                hospitalName: hospitalName,
+                address: address,
+                email: email,
+                phone: phone,
+                hospitalType: hospitalType,
+                license: license,
+                uploadedFile: uploadedFile,
+                beds: beds,
+                services: services,
+                departments: departments  // Include departments in the hospitalDetails object
+            };
+            firebase.database().ref('registered_hospitals').push(hospitalDetails)
+                .then(() => {
+                    $('#successModal').modal('show');
+                    // window.location.href = "{{ url_for('login') }}";
+                })
+                .catch((error) => {
+                    console.error('Error storing hospital details: ', error);
+                });
+        }
+    </script>
+</body>
+
+</html>

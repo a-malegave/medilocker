@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/assets/bootstrap/css/bootstrap.min.css') }} " />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='/assets/css/styles.min.css') }}" />
+    <script type="module" src="{{ url_for('static', filename='/assets/js/script.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+
+<body class="bg-gradient-primary">
+    <div class="container">
+        <div class="card shadow-lg o-hidden border-0 my-5">
+            <div class="card-body p-0">
+                <div class="row">
+                    <div class="col-lg-5 d-none d-lg-flex">
+                        <div class="flex-grow-1 bg-register-image" style="background-image: url('dogs/image2.jpeg')">
+                            <img src="{{ url_for('static', filename='/assets/img/logo.png') }}" width="378"
+                                height="365" />
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h4 class="text-dark mb-4">Create an Account!</h4>
+                            </div>
+                            <form class="user" id="signup_form">
+                                <div class="row mb-3">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <input class="form-control form-control-user" type="text" id="FirstName"
+                                            placeholder="First Name" name="first_name" required pattern="[A-Za-z]+"
+                                            title="Please enter only alphabetic characters" />
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input class="form-control form-control-user" type="text" id="LastName"
+                                            placeholder="Last Name" name="last_name" required pattern="[A-Za-z]+"
+                                            title="Please enter only alphabetic characters" />
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <input class="form-control form-control-user" type="email" id="InputEmail"
+                                        aria-describedby="emailHelp" placeholder="Email Address" name="email"
+                                        required />
+                                    <div id="email-feedback" class="text-center"></div>
+
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <input class="form-control form-control-user" type="password" id="PasswordInput"
+                                            placeholder="Password" name="password" required />
+                                        <div id="password-strength-feedback" class="text-center"></div>
+
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input class="form-control form-control-user" type="password"
+                                            id="RepeatPasswordInput" placeholder="Repeat Password"
+                                            name="password_repeat" required />
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" id="customCheck1" />
+                                        <label class="custom-control-label" for="customCheck1">I agree to the <a
+                                                href="#" data-toggle="modal" data-target="#exampleModal">terms of
+                                                service</a></label>
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-primary d-block btn-user w-100" id="signup_btn" type="submit">
+                                    Register Account
+                                </button>
+                                <hr />
+                            </form>
+                            <!-- <div class="text-center">
+                                <a class="small" href="forgot-password.html" id="forgot_password_link">Forgot
+                                    Password?</a>
+                            </div> -->
+                            <div class="text-center">
+                                <a class="small" href="{{url_for('login')}}">Already have an account? Login!</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1-0/firebase.js"></script>
+    <!-- Add these scripts at the end of the body tag -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.1-0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.1-0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.1-0/firebase-database.js"></script>
+
+    <script type="module">
+        const firebaseConfig = {
+            apiKey: "AIzaSyCftjIElJpUydY6s-7iXull3QA7rIAG868",
+            authDomain: "medilocker-d8f29.firebaseapp.com",
+            databaseURL: "https://medilocker-d8f29-default-rtdb.firebaseio.com",
+            projectId: "medilocker-d8f29",
+            storageBucket: "medilocker-d8f29.appspot.com",
+            messagingSenderId: "952661337765",
+            appId: "1:952661337765:web:7d3c1bad571d17dcfdcf4c"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        function validateForm() {
+            var password = document.getElementById("PasswordInput").value;
+            var repeatPassword = document.getElementById("RepeatPasswordInput").value;
+            if (password !== repeatPassword) {
+                alert("Passwords do not match");
+                return false;
+            }
+            return true;
+        }
+        
+
+        document.getElementById("signup_form").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            if (!validateForm()) {
+                return; // Don't proceed if validation fails
+            }
+
+            // Get values from the form
+            const firstName = document.getElementById("FirstName").value;
+            const lastName = document.getElementById("LastName").value;
+            const email = document.getElementById("InputEmail").value;
+
+            // Register the new user in Firebase Authentication
+            const signup_email = document.getElementById("InputEmail").value;
+            const signup_password = document.getElementById("PasswordInput").value;
+
+            firebase.auth().createUserWithEmailAndPassword(signup_email, signup_password)
+                .then(function () {
+                    // Successfully registered user, now store details in the Realtime Database
+                    const userDetails = {
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email
+                    };
+
+                    // Push the user details to the Firebase Realtime Database
+                    firebase.database().ref('users').push(userDetails)
+                        .then(() => {
+                            window.location.href = "{{ url_for('users') }}";
+                            document.getElementById("signup_form").reset();
+                        })
+                        .catch((error) => {
+                            alert('Error adding user details to the database:', error);
+                        });
+
+                })
+                .catch(function (error) {
+                    alert("Error registering user:", error);
+                });
+        });
+
+
+
+    </script>
+
+
+    <script>
+        function checkPasswordStrength(password) {
+            // Define regular expressions for different password strength criteria
+            const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+            const mediumRegex = new RegExp("^(?=.*[a-zA-Z])(?=.*[0-9])(?=.{6,})");
+
+            if (strongRegex.test(password)) {
+                return "strong";
+            } else if (mediumRegex.test(password)) {
+                return "medium";
+            } else {
+                return "weak";
+            }
+        }
+
+        document.getElementById("PasswordInput").addEventListener("input", function () {
+            const password = this.value;
+            const strength = checkPasswordStrength(password);
+            const feedbackElement = document.getElementById("password-strength-feedback");
+
+            if (strength === "strong") {
+                feedbackElement.innerText = "Password is strong";
+                feedbackElement.style.color = "green";
+            } else if (strength === "medium") {
+                feedbackElement.innerText = "Password is medium";
+                feedbackElement.style.color = "orange";
+            } else {
+                feedbackElement.innerText = "Password is weak";
+                feedbackElement.style.color = "red";
+            }
+        });
+
+
+        document.getElementById("InputEmail").addEventListener("input", function () {
+            const email = this.value;
+            const isValidEmail = validateEmail(email);
+            const feedbackElement = document.getElementById("email-feedback");
+
+            if (isValidEmail) {
+                feedbackElement.innerText = "Email address is valid";
+                feedbackElement.style.color = "green";
+            } else {
+                feedbackElement.innerText = "Please enter a valid email address";
+                feedbackElement.style.color = "red";
+            }
+        });
+
+        function validateEmail(email) {
+            // Regular expression to validate email address format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+
+
+        // Add event listener to the "Forgot Password" link
+        document.getElementById("forgot_password_link").addEventListener("click", function (event) {
+            event.preventDefault();
+
+            // Prompt the user to enter their email address
+            var email = prompt("Please enter your email address to reset your password:");
+
+            // If user provides an email, send password reset email
+            if (email) {
+                firebase.auth().sendPasswordResetEmail(email)
+                    .then(function () {
+                        alert("Password reset email sent. Check your inbox.");
+                    })
+                    .catch(function (error) {
+                        alert("Error sending password reset email: " + error.message);
+                    });
+            }
+        });
+
+
+
+    </script>
+
+
+
+
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel" style="color: indianred;">Important!</h5>
+                </div>
+                <div class="modal-body">
+                    <!-- Warnings -->
+                    <h5>Dear User,</h5>
+
+                    <h6>Please be aware of the following guidelines before creating account for hospital on
+                        <b>Medilocker</b>:
+                    </h6>
+                    <h4>Warnings:</h4>
+                    <ul>
+                        <li>Protect patient data.</li>
+                        <li>Keep login credentials private.</li>
+                        <li>Update security measures.</li>
+                        <li>Be cautious with access permissions.</li>
+                        <li>Report any issues promptly.</li>
+                        <!-- Add more warnings here if needed -->
+                    </ul>
+                    <!-- Responsibilities -->
+                    <h4>Responsibilities:</h4>
+                    <ul>
+                        <li>Manage user accounts securely.</li>
+                        <li>Ensure accurate patient records.</li>
+                        <li>Monitor system activity.</li>
+                        <li>Enforce data security policies.</li>
+                        <!-- Add more responsibilities here if needed -->
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                        onclick="closeModal()">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Show the modal when the page loads
+        $(document).ready(function () {
+            $('#exampleModal').modal('show');
+        });
+
+        function closeModal() {
+            $('#exampleModal').modal('hide');
+        }
+    </script>
+
+
+</body>
+
+</html>
